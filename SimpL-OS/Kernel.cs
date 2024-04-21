@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using Cosmos.Core;
 using Cosmos.System.ExtendedASCII;
 using System.Drawing;
+using System.Threading;
 
 namespace SimpL_OS
 {
@@ -32,6 +33,7 @@ namespace SimpL_OS
             Console.WriteLine(" ");
 
             Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
+
         }
 
         protected override void Run()
@@ -43,11 +45,13 @@ namespace SimpL_OS
             if (input.ToLower() == "help")
             {
                 Console.WriteLine(" ");
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine("Available commands:");
                 Console.WriteLine("- help           :-   SHOWS list of commands");
                 Console.WriteLine("- sys prop       :-   SHOWS the system specifications");
                 Console.WriteLine("- clear          :-   CLEARS the console");
-                Console.WriteLine("---------------------------------------------------------------");
+                Console.WriteLine("- time now       :-   SHOWS the current time");
+                Console.WriteLine("--------------------------------------------------------------------");
                 Console.WriteLine("- create dir:    :-   CREATES a directory");
                 Console.WriteLine("- create f:      :-   CREATES a text file");
                 Console.WriteLine("- write:         :-   WRITES content to the text file");
@@ -55,9 +59,11 @@ namespace SimpL_OS
                 Console.WriteLine("- update:        :-   UPDATES the content of the text file");
                 Console.WriteLine("- delete dir:    :-   DELETES a directory");
                 Console.WriteLine("- delete f:      :-   DELETES a text file");
-                Console.WriteLine("---------------------------------------------------------------");
+                Console.WriteLine("- move f:        :-   MOVES a text file to a different location");
+                Console.WriteLine("--------------------------------------------------------------------");
                 Console.WriteLine("- off            :-   SHUTDOWN");
                 Console.WriteLine("- reboot         :-   REBOOT");
+                Console.ResetColor();
                 Console.WriteLine(" ");
 
             }
@@ -83,6 +89,7 @@ namespace SimpL_OS
             {
                 Console.WriteLine("[1] Root Directory");
                 Console.WriteLine("[2] Sub Directory");
+                Console.WriteLine(" ");
                 Console.Write("Select an option: ");
                 string option = Console.ReadLine();
 
@@ -778,6 +785,133 @@ namespace SimpL_OS
                 }
             }
 
+            // MOVE FILE
+            else if (input.ToLower() == "move f")
+            {
+                Console.WriteLine("Move file from:");
+                Console.WriteLine("[1] Main Root");
+                Console.WriteLine("[2] Root Directory");
+                Console.WriteLine("[3] Sub Directory");
+
+                string sourceChoice = Console.ReadLine();
+
+                string sourceDirectory = "";
+                if (sourceChoice == "1")
+                {
+                    sourceDirectory = @"0:\";
+                }
+                else if (sourceChoice == "2")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter root directory name:");
+                    string rootDirName = Console.ReadLine();
+                    sourceDirectory = @"0:\" + rootDirName;
+                }
+                else if (sourceChoice == "3")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter root directory name:");
+                    string rootDirName = Console.ReadLine();
+
+                    Console.WriteLine("Sub Directories:");
+                    var subDirectories = Directory.GetDirectories(@"0:\" + rootDirName);
+                    foreach (var subDir in subDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(subDir));
+                    }
+
+                    Console.WriteLine("Enter sub directory name:");
+                    string subDirName = Console.ReadLine();
+                    sourceDirectory = @"0:\" + rootDirName + @"\" + subDirName;
+                }
+
+                Console.WriteLine("List of Files:");
+                var files = Directory.GetFiles(sourceDirectory);
+                foreach (var file in files)
+                {
+                    Console.WriteLine("-" + Path.GetFileName(file));
+                }
+
+                Console.WriteLine("Enter file name to move:");
+                string fileName = Console.ReadLine();
+                string sourceFile = Path.Combine(sourceDirectory, fileName);
+
+                Console.WriteLine("Where do you want to move the file?");
+                Console.WriteLine("[1] Main Root");
+                Console.WriteLine("[2] Root Directory");
+                Console.WriteLine("[3] Sub Directory");
+
+                string destinationChoice = Console.ReadLine();
+
+                string destinationDirectory = "";
+                if (destinationChoice == "1")
+                {
+                    destinationDirectory = @"0:\";
+                }
+                else if (destinationChoice == "2")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter root directory name:");
+                    string rootDirName = Console.ReadLine();
+                    destinationDirectory = @"0:\" + rootDirName;
+                }
+                else if (destinationChoice == "3")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter root directory name:");
+                    string rootDirName = Console.ReadLine();
+
+                    Console.WriteLine("Sub Directories:");
+                    var subDirectories = Directory.GetDirectories(@"0:\" + rootDirName);
+                    foreach (var subDir in subDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(subDir));
+                    }
+
+                    Console.WriteLine("Enter sub directory name:");
+                    string subDirName = Console.ReadLine();
+                    destinationDirectory = @"0:\" + rootDirName + @"\" + subDirName;
+                }
+
+                string destinationFile = Path.Combine(destinationDirectory, fileName);
+
+                try
+                {
+                    File.Copy(sourceFile, destinationFile);
+                    File.Delete(sourceFile);
+                    Console.WriteLine($"File has been moved to {destinationFile}");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+
             // OS SHUTDOWN
             else if (input.ToLower() == "off")
             {
@@ -814,6 +948,13 @@ namespace SimpL_OS
                 }
                 Console.WriteLine(" ");
 
+            }
+
+            else if (input.ToLower() == "time now")
+            {
+                DateTime currentTime = DateTime.Now;
+                string formattedDateTime = currentTime.ToString("MM/dd/yyyy hh:mm:ss tt");
+                Console.WriteLine("Current date and time: " + formattedDateTime);
             }
 
             // ELSE NOTHING
