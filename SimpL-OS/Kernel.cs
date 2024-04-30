@@ -60,6 +60,8 @@ namespace SimpL_OS
                 Console.WriteLine("- delete dir:    :-   DELETES a directory");
                 Console.WriteLine("- delete f:      :-   DELETES a text file");
                 Console.WriteLine("- move f:        :-   MOVES a text file to a different location");
+                Console.WriteLine("- show f:        :-   SHOWS all text files");
+                Console.WriteLine("- show dir:      :-   SHOWS all directories");
                 Console.WriteLine("--------------------------------------------------------------------");
                 Console.WriteLine("- off            :-   SHUTDOWN");
                 Console.WriteLine("- reboot         :-   REBOOT");
@@ -911,6 +913,115 @@ namespace SimpL_OS
                 }
             }
 
+            //SHOW FILES
+            else if(input.ToLower() == "show f")
+            {
+                Console.WriteLine("Where is the file located?");
+                Console.WriteLine("[1] Main Root");
+                Console.WriteLine("[2] Root Directory");
+                Console.WriteLine("[3] Sub Directory");
+
+                string choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    Console.WriteLine("List of files:");
+                    var files = Directory.GetFiles(@"0:\");
+                    foreach (var file in files)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(file));
+                    }
+                }
+                else if (choice == "2")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter directory name:");
+                    string rootDirName = Console.ReadLine();
+
+                    Console.WriteLine("List of Files from" + rootDirName + ":");
+                    var files = Directory.GetFiles(@"0:\" + rootDirName);
+                    foreach (var file in files)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(file));
+                    }
+
+                }
+                else if (choice == "3")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter Root Directory name:");
+                    string rootDirName = Console.ReadLine();
+
+                    Console.WriteLine("Sub Directories:");
+                    var subDirectories = Directory.GetDirectories(@"0:\" + rootDirName);
+                    foreach (var subDir in subDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(subDir));
+                    }
+
+                    Console.WriteLine("Enter sub directory name:");
+                    string subDirName = Console.ReadLine();
+
+                    Console.WriteLine("List of Files from" + subDirName + ":");
+                    var files = Directory.GetFiles(@"0:\" + rootDirName + @"\" + subDirName);
+                    foreach (var file in files)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(file));
+                    }
+                }
+
+            }
+
+            //SHOW DIRECTORIES
+            else if (input.ToLower() == "show dir")
+            {
+                Console.WriteLine("Show Directories From??");
+                Console.WriteLine("[1] Root Directories");
+                Console.WriteLine("[2] Sub Directories");
+
+                string choice = Console.ReadLine();
+
+                if (choice == "1")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+                }
+                else if (choice == "2")
+                {
+                    Console.WriteLine("Root Directories:");
+                    var rootDirectories = Directory.GetDirectories(@"0:\");
+                    foreach (var rootDir in rootDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(rootDir));
+                    }
+
+                    Console.WriteLine("Enter Root Directory name:");
+                    string rootDirName = Console.ReadLine();
+
+                    Console.WriteLine("Sub Directories:");
+                    var subDirectories = Directory.GetDirectories(@"0:\" + rootDirName);
+                    foreach (var subDir in subDirectories)
+                    {
+                        Console.WriteLine("-" + Path.GetFileName(subDir));
+                    }
+                }
+            }
 
             // OS SHUTDOWN
             else if (input.ToLower() == "off")
